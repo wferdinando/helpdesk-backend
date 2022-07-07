@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.github.wferdinando.helpdesk.domain.enums.Prioridade;
 import io.github.wferdinando.helpdesk.domain.enums.Status;
@@ -38,10 +39,12 @@ public class Chamado implements Serializable {
 
 	private String observacoes;
 
+	@JsonManagedReference
 	@ManyToOne
 	@JoinColumn(name = "tecnico_id")
 	private Tecnico tecnico;
 
+	@JsonManagedReference
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
 	private Cliente cliente;
