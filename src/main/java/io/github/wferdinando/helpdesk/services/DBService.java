@@ -2,7 +2,6 @@ package io.github.wferdinando.helpdesk.services;
 
 import java.util.Arrays;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import io.github.wferdinando.helpdesk.domain.Chamado;
@@ -16,7 +15,6 @@ import io.github.wferdinando.helpdesk.repositories.ClienteRepository;
 import io.github.wferdinando.helpdesk.repositories.TecnicoRepository;
 
 @Service
-@Profile(value = "test")
 public class DBService {
 
 	// Injeção de Dependendencia
