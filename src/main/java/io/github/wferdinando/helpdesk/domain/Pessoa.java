@@ -1,30 +1,54 @@
 package io.github.wferdinando.helpdesk.domain;
 // o abstract força para que não possa ser instanciado a classe pessoa, e sim apenas seus herdeiros
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.github.wferdinando.helpdesk.domain.enums.Perfil;
 
-public abstract class Pessoa {
+@Entity
+public abstract class Pessoa implements Serializable {
+	private static final long serialVersionUID = 1L;
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected Integer id;
 
 	protected String nome;
+
+	@Column(unique = true)
 	protected String cpf;
+
+	@Column(unique = true)
 	protected String email;
+
 	protected String senha;
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "PERFIS")
 	protected Set<Integer> perfis = new HashSet<>(); // o set não permite valores duplicados
 
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	protected LocalDate dataCriacao = LocalDate.now(); // pega a data em que o objeto foi criado
 
 	public Pessoa() {
 		super();
-		addPerfil(Perfil.CLIENTE);
+		addPerfil(Perfil.CLIENTE);// toda vez que o objeto for criado, será atribuido o perfil automatico
 	}
 
 	public Pessoa(Integer id, String nome, String cpf, String email, String senha) {
@@ -34,7 +58,7 @@ public abstract class Pessoa {
 		this.cpf = cpf;
 		this.email = email;
 		this.senha = senha;
-		addPerfil(Perfil.CLIENTE);
+		addPerfil(Perfil.CLIENTE);// toda vez que o objeto for criado, será atribuido o perfil automatico
 	}
 
 	public Integer getId() {
@@ -79,12 +103,12 @@ public abstract class Pessoa {
 
 	public Set<Perfil> getPerfis() {
 		return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
-		//varre o perfil do enum em busca do código
+		// varre o perfil do enum em busca do código
 	}
 
 	public void addPerfil(Perfil perfil) {
 		this.perfis.add(perfil.getCodigo());
-		//seta o código diratamente 
+		// seta o código diratamente
 	}
 
 	public LocalDate getDataCriacao() {
