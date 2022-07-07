@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import io.github.wferdinando.helpdesk.domain.Tecnico;
 import io.github.wferdinando.helpdesk.repositories.TecnicoRepository;
+import io.github.wferdinando.helpdesk.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class TecnicoService {
@@ -15,10 +16,10 @@ public class TecnicoService {
 	public TecnicoService(TecnicoRepository tecnicoRepository) {
 		this.tecnicoRepository = tecnicoRepository;
 	}
-	
+
 	public Tecnico findById(Integer id) {
 		Optional<Tecnico> obj = tecnicoRepository.findById(id);
-		return obj.orElse(null);
+		return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! Id: " + id));
 	}
 
 }

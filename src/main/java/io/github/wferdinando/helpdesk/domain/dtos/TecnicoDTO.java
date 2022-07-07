@@ -18,7 +18,7 @@ public class TecnicoDTO implements Serializable {
 	private String nome;
 	private String cpf;
 	private String email;
-	private String senha;
+	// private String senha;
 
 	private Set<Integer> perfis = new HashSet<>();
 
@@ -35,7 +35,7 @@ public class TecnicoDTO implements Serializable {
 		this.nome = obj.getNome();
 		this.cpf = obj.getCpf();
 		this.email = obj.getEmail();
-		this.senha = obj.getSenha();
+		// this.senha = obj.getSenha();
 		this.perfis = obj.getPerfis().stream().map(x -> x.getCodigo()).collect(Collectors.toSet());
 		this.dataCriacao = obj.getDataCriacao();
 	}
@@ -72,14 +72,13 @@ public class TecnicoDTO implements Serializable {
 		this.email = email;
 	}
 
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
+	/*
+	 * public String getSenha() { return senha; }
+	 * 
+	 * public void setSenha(String senha) { this.senha = senha; }
+	 *
+	 */
+	
 	public Set<Perfil> getPerfis() {
 		return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
 	}
