@@ -1,13 +1,17 @@
 package io.github.wferdinando.helpdesk.resources;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.github.wferdinando.helpdesk.domain.Tecnico;
 import io.github.wferdinando.helpdesk.domain.dtos.TecnicoDTO;
@@ -36,4 +40,11 @@ public class TecnicoResource {
 		return ResponseEntity.ok().body(listTecnicoDTO);
 	}
 
+	@PostMapping
+	public ResponseEntity<TecnicoDTO> create(@RequestBody TecnicoDTO tecnicoDTO) {
+		Tecnico novoTecnico = tecnicoService.create(tecnicoDTO);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(novoTecnico.getId())
+				.toUri(); // pega o ID do novo Objeto
+		return ResponseEntity.created(uri).build();
+	}
 }
