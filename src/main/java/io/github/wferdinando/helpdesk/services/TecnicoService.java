@@ -5,18 +5,23 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import io.github.wferdinando.helpdesk.domain.Pessoa;
 import io.github.wferdinando.helpdesk.domain.Tecnico;
 import io.github.wferdinando.helpdesk.domain.dtos.TecnicoDTO;
+import io.github.wferdinando.helpdesk.repositories.PessoaRepository;
 import io.github.wferdinando.helpdesk.repositories.TecnicoRepository;
+import io.github.wferdinando.helpdesk.services.exceptions.DataIntegrityViolationException;
 import io.github.wferdinando.helpdesk.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class TecnicoService {
 
 	final private TecnicoRepository tecnicoRepository;
+	final private PessoaRepository pessoaRepository;
 
-	public TecnicoService(TecnicoRepository tecnicoRepository) {
+	public TecnicoService(TecnicoRepository tecnicoRepository, PessoaRepository pessoaRepository) {
 		this.tecnicoRepository = tecnicoRepository;
+		this.pessoaRepository = pessoaRepository;
 	}
 
 	public Tecnico findById(Integer id) {
@@ -29,9 +34,21 @@ public class TecnicoService {
 	}
 
 	public Tecnico create(TecnicoDTO tecnicoDTO) {
-		tecnicoDTO.setId(null); //para ter certeza que vai vir um id nulo
+		tecnicoDTO.setId(null); // para ter certeza que vai vir um id nulo
+		validaPorCpfEEmail(tecnicoDTO);
 		Tecnico novoTecnico = new Tecnico(tecnicoDTO);
 		return tecnicoRepository.save(novoTecnico);
+	}
+
+	private void validaPorCpfEEmail(TecnicoDTO objDTO) {
+		Optional<Pessoa> obj = pessoaRepository.findByCpf(objDTO.getCpf());
+		if (obj.isPresent() && obj.get().getId() != objDTO.getId()) {
+			throw new DataIntegrityViolationException("CPF já cadastrado no sistema!");
+		}
+		obj = pessoaRepository.findByEmail(objDTO.getEmail());
+		if (obj.isPresent() && obj.get().getId() != objDTO.getId()) {
+			throw new DataIntegrityViolationException("E-mail já cadastrado no sistema!");
+		}
 	}
 
 }
