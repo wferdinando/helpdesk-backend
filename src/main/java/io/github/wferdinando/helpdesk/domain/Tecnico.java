@@ -30,15 +30,16 @@ public class Tecnico extends Pessoa {
 		addPerfil(Perfil.TECNICO);// toda vez que o objeto for criado, será atribuido o perfil automatico
 	}
 
-	public Tecnico(TecnicoDTO obj) {
+	//Converte TecnicoDTO para um Tecnico
+	public Tecnico(TecnicoDTO tecnico) {
 		super();
-		this.id = obj.getId();
-		this.nome = obj.getNome();
-		this.cpf = obj.getCpf();
-		this.email = obj.getEmail();
-		this.senha = obj.getSenha();
-		this.perfis = obj.getPerfis().stream().map(x -> x.getCodigo()).collect(Collectors.toSet());
-		this.dataCriacao = obj.getDataCriacao();
+		this.id = tecnico.getId();
+		this.nome = tecnico.getNome();
+		this.cpf = tecnico.getCpf();
+		this.email = tecnico.getEmail();
+		this.senha = tecnico.getSenha();
+		this.perfis = tecnico.getPerfis().stream().map(x -> x.getCodigo()).collect(Collectors.toSet());
+		this.dataCriacao = tecnico.getDataCriacao();
 	}
 
 	public List<Chamado> getChamados() {
