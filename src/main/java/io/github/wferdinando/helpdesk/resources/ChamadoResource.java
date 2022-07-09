@@ -1,5 +1,8 @@
 package io.github.wferdinando.helpdesk.resources;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +27,14 @@ public class ChamadoResource {
 	public ResponseEntity<ChamadoDTO> findById(@PathVariable(value = "id") Integer id) {
 		Chamado chamado = chamadoService.findById(id);
 		return ResponseEntity.ok().body(new ChamadoDTO(chamado));
+	}
+
+	@GetMapping
+	public ResponseEntity<List<ChamadoDTO>> findAll() {
+		List<Chamado> listaChamado = chamadoService.findAll();
+		List<ChamadoDTO> listaChamadoDTO = listaChamado.stream().map(obj -> new ChamadoDTO(obj))
+				.collect(Collectors.toList());
+		return ResponseEntity.ok().body(listaChamadoDTO);
 	}
 
 }
