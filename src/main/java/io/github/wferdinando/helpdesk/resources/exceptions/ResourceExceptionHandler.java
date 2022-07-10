@@ -16,29 +16,36 @@ import io.github.wferdinando.helpdesk.services.exceptions.ObjectNotFoundExceptio
 public class ResourceExceptionHandler {
 
 	@ExceptionHandler(ObjectNotFoundException.class)
-	public ResponseEntity<StandardError> objectNotFoundException(ObjectNotFoundException ex,
+	public ResponseEntity<StandardError> objectnotFoundException(ObjectNotFoundException ex,
 			HttpServletRequest request) {
+
 		StandardError error = new StandardError(System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(),
-				"Object Not Found!", ex.getMessage(), request.getRequestURI());
+				"Object Not Found", ex.getMessage(), request.getRequestURI());
+
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<StandardError> dataIntegrityViolationException(DataIntegrityViolationException ex,
 			HttpServletRequest request) {
+
 		StandardError error = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
-				"Violação de Dados!", ex.getMessage(), request.getRequestURI());
+				"Violação de dados", ex.getMessage(), request.getRequestURI());
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 	}
-	
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ValidationError> validationErrors(MethodArgumentNotValidException ex,
+	public ResponseEntity<StandardError> validationErrors(MethodArgumentNotValidException ex,
 			HttpServletRequest request) {
-		ValidationError errors = new ValidationError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+
+		ValidationError errors = new ValidationError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(), 
 				"Validation error", "Erro na validação dos campos", request.getRequestURI());
+		
 		for(FieldError x : ex.getBindingResult().getFieldErrors()) {
 			errors.addError(x.getField(), x.getDefaultMessage());
 		}
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
 	}
 	
