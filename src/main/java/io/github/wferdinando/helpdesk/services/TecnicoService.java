@@ -3,6 +3,7 @@ package io.github.wferdinando.helpdesk.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.github.wferdinando.helpdesk.domain.Pessoa;
@@ -18,10 +19,12 @@ public class TecnicoService {
 
 	final private TecnicoRepository tecnicoRepository;
 	final private PessoaRepository pessoaRepository;
+	final private BCryptPasswordEncoder encoder;
 
-	public TecnicoService(TecnicoRepository tecnicoRepository, PessoaRepository pessoaRepository) {
+	public TecnicoService(TecnicoRepository tecnicoRepository, PessoaRepository pessoaRepository, BCryptPasswordEncoder encoder) {
 		this.tecnicoRepository = tecnicoRepository;
 		this.pessoaRepository = pessoaRepository;
+		this.encoder = encoder;
 	}
 
 	public Tecnico findById(Integer id) {
@@ -35,6 +38,7 @@ public class TecnicoService {
 
 	public Tecnico create(TecnicoDTO tecnicoDTO) {
 		tecnicoDTO.setId(null); // para ter certeza que vai vir um id nulo
+		tecnicoDTO.setSenha(encoder.encode(tecnicoDTO.getSenha()));
 		validaPorCpfEEmail(tecnicoDTO);
 		Tecnico novoTecnico = new Tecnico(tecnicoDTO);
 		return tecnicoRepository.save(novoTecnico);

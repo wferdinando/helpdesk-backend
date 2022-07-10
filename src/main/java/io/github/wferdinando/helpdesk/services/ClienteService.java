@@ -3,6 +3,7 @@ package io.github.wferdinando.helpdesk.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.github.wferdinando.helpdesk.domain.Cliente;
@@ -16,12 +17,14 @@ import io.github.wferdinando.helpdesk.services.exceptions.ObjectNotFoundExceptio
 @Service
 public class ClienteService {
 
-	private ClienteRepository clienteRepository;
-	private PessoaRepository pessoaRepository;
+	final private ClienteRepository clienteRepository;
+	final private PessoaRepository pessoaRepository;
+	final private BCryptPasswordEncoder encoder;
 
-	public ClienteService(ClienteRepository clienteRepository, PessoaRepository pessoaRepository) {
+	public ClienteService(ClienteRepository clienteRepository, PessoaRepository pessoaRepository, BCryptPasswordEncoder encoder) {
 		this.clienteRepository = clienteRepository;
 		this.pessoaRepository = pessoaRepository;
+		this.encoder = encoder;
 	}
 
 	public Cliente findById(Integer id) {
@@ -35,6 +38,7 @@ public class ClienteService {
 
 	public Cliente create(ClienteDTO clienteDTO) {
 		clienteDTO.setId(null);
+		clienteDTO.setSenha(encoder.encode(clienteDTO.getSenha()));
 		validaPorCpfEEmail(clienteDTO);
 		Cliente cliente = new Cliente(clienteDTO);
 		return clienteRepository.save(cliente);
