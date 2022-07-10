@@ -6,6 +6,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import io.github.wferdinando.helpdesk.domain.Chamado;
+import io.github.wferdinando.helpdesk.domain.dtos.ChamadoDTO;
+import io.github.wferdinando.helpdesk.domain.enums.Prioridade;
+import io.github.wferdinando.helpdesk.domain.enums.Status;
 import io.github.wferdinando.helpdesk.repositories.ChamadoRepository;
 import io.github.wferdinando.helpdesk.services.exceptions.ObjectNotFoundException;
 
@@ -13,9 +16,14 @@ import io.github.wferdinando.helpdesk.services.exceptions.ObjectNotFoundExceptio
 public class ChamadoService {
 
 	private ChamadoRepository chamadoRepository;
+	private TecnicoService tecnicoService;
+	private ClienteService clienteService;
 
-	public ChamadoService(ChamadoRepository chamadoRepository) {
+	public ChamadoService(ChamadoRepository chamadoRepository, TecnicoService tecnicoService,
+			ClienteService clienteService) {
 		this.chamadoRepository = chamadoRepository;
+		this.tecnicoService = tecnicoService;
+		this.clienteService = clienteService;
 	}
 
 	public Chamado findById(Integer id) {
@@ -25,6 +33,27 @@ public class ChamadoService {
 
 	public List<Chamado> findAll() {
 		return chamadoRepository.findAll();
+	}
+
+	public Chamado create(ChamadoDTO chamadoDTO) {
+		return chamadoRepository.save(novoChamado(chamadoDTO));
+	}
+
+	private Chamado novoChamado(ChamadoDTO chamadoDTO) {
+		var tecnico = tecnicoService.findById(chamadoDTO.getTecnico());
+		var cliente = clienteService.findById(chamadoDTO.getCliente());
+		Chamado chamado = new Chamado();
+		if (chamadoDTO.getId() != null) {
+			chamado.setId(chamadoDTO.getId());
+		}
+		chamado.setTecnico(tecnico);
+		chamado.setCliente(cliente);
+		chamado.setPrioridade(Prioridade.toEnum(chamadoDTO.getPrioridade()));
+		chamado.setStatus(Status.toEnum(chamadoDTO.getStatus()));
+		chamado.setTitulo(chamadoDTO.getTitulo());
+		chamado.setObservacoes(chamadoDTO.getObservacoes());
+		return chamado;
+
 	}
 
 }
