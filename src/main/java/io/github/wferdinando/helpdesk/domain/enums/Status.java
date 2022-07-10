@@ -9,7 +9,7 @@ public enum Status {
 	// null
 	// caso exista o código verificar se é um código válido
 
-	ABERTO(0, "ABERTO"), ANDAMENTO(0, "ANDAMENTO"), ENCERRADO(1, "ENCERRADO");
+	ABERTO(0, "ABERTO"), ANDAMENTO(1, "ANDAMENTO"), ENCERRADO(2, "ENCERRADO");
 
 	private Integer codigo;
 	private String descricao;

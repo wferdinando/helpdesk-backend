@@ -1,5 +1,6 @@
 package io.github.wferdinando.helpdesk.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,13 @@ public class ChamadoService {
 	public Chamado create(ChamadoDTO chamadoDTO) {
 		return chamadoRepository.save(novoChamado(chamadoDTO));
 	}
+	
+	public Chamado update(Integer id, ChamadoDTO chamadoDTO) {
+		chamadoDTO.setId(id);
+		var chamadoOld  = findById(id);
+		chamadoOld = novoChamado(chamadoDTO);
+		return chamadoRepository.save(chamadoOld);
+	}
 
 	private Chamado novoChamado(ChamadoDTO chamadoDTO) {
 		var tecnico = tecnicoService.findById(chamadoDTO.getTecnico());
@@ -46,6 +54,11 @@ public class ChamadoService {
 		if (chamadoDTO.getId() != null) {
 			chamado.setId(chamadoDTO.getId());
 		}
+		
+		if(chamadoDTO.getStatus().equals(2)) {
+			chamado.setDataFechamento(LocalDate.now());
+		}
+		
 		chamado.setTecnico(tecnico);
 		chamado.setCliente(cliente);
 		chamado.setPrioridade(Prioridade.toEnum(chamadoDTO.getPrioridade()));
@@ -55,5 +68,7 @@ public class ChamadoService {
 		return chamado;
 
 	}
+
+	
 
 }
