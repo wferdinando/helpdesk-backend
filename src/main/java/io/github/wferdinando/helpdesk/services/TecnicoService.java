@@ -21,7 +21,8 @@ public class TecnicoService {
 	final private PessoaRepository pessoaRepository;
 	final private BCryptPasswordEncoder encoder;
 
-	public TecnicoService(TecnicoRepository tecnicoRepository, PessoaRepository pessoaRepository, BCryptPasswordEncoder encoder) {
+	public TecnicoService(TecnicoRepository tecnicoRepository, PessoaRepository pessoaRepository,
+			BCryptPasswordEncoder encoder) {
 		this.tecnicoRepository = tecnicoRepository;
 		this.pessoaRepository = pessoaRepository;
 		this.encoder = encoder;
@@ -47,6 +48,11 @@ public class TecnicoService {
 	public Tecnico update(Integer id, TecnicoDTO tecnicoDTO) {
 		tecnicoDTO.setId(id); // seta o id
 		Tecnico oldObj = findById(id); // busca o id no banco
+
+		if (!tecnicoDTO.getSenha().equals(oldObj.getSenha())) {
+			tecnicoDTO.setSenha(encoder.encode(tecnicoDTO.getSenha()));
+		}
+
 		validaPorCpfEEmail(tecnicoDTO); // valida se os dados são corretos
 		oldObj = new Tecnico(tecnicoDTO); // cria um novo objeto
 		return tecnicoRepository.save(oldObj);
